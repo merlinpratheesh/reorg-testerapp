@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "candiser": {
+      "hosting": {
+        "globalstartscss": [
+          "candiser"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "candiser"
+  }
+}
