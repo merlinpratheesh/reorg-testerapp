@@ -26,12 +26,13 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@google-pay/button-angular": "^2.1.5",
+    "firebase": "^7.0 || ^8.0",
     "ngx-sharebuttons": "^8.0.4",
     "rxfire": "^4.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
-    "zone.js": "~0.10.2",
-    "firebase": "^7.0 || ^8.0"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1002.0",

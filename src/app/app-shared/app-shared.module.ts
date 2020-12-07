@@ -10,7 +10,8 @@ import { faTwitterSquare } from '@fortawesome/free-brands-svg-icons/faTwitterSqu
 import { faPinterest } from '@fortawesome/free-brands-svg-icons/faPinterest';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons/faWhatsapp'
 import { faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { ShareIconsModule } from 'ngx-sharebuttons/icons';
+import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 
 
 @NgModule({
@@ -21,7 +22,9 @@ import { faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
     ReactiveFormsModule ,
     FormsModule,
     FlexLayoutModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ShareIconsModule,
+    ShareButtonsModule,
   ]
 
 })

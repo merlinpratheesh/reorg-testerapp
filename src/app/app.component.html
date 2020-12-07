@@ -43,8 +43,14 @@
                 <p>
                   We like to develop products which will change the status Quo of the present situation.<br>
                   We would like to see products developed for indian customers.<br>
-                  The Areas of focus are Social Apps,  Voter App, Consent App, Learning App etc
+                  The Areas of focus are:
                 </p>
+                <ul>
+                  <li>Social Apps</li>
+                  <li>Voter App</li>
+                  <li> Consent App</li>
+                  <li>Learning App</li>
+                </ul>
               </mat-card-content>
             </mat-card>
           </div>
@@ -100,8 +106,59 @@
                     Email: gmanoj.isaac@gmail.com <br>
                     Whatsapp: 9539325410
                 </p>
+<!--
+ Copyright 2020 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<style></style>
+
+<div class="content" role="main">
+
+  <div class="examples">
+    <div class="example">
+      <div class="title">DONATE</div>
+      <div class="demo">
+        <google-pay-button
+          environment="TEST"
+          [buttonType]="buttonType"
+          [buttonColor]="buttonColor"
+          [existingPaymentMethodRequired]="existingPaymentMethodRequired"
+          [paymentRequest]="{
+            apiVersion: paymentRequest.apiVersion,
+            apiVersionMinor: paymentRequest.apiVersionMinor,
+            allowedPaymentMethods: paymentRequest.allowedPaymentMethods,
+            merchantInfo: paymentRequest.merchantInfo,
+            transactionInfo: {
+              totalPriceStatus: 'FINAL',
+              totalPriceLabel: 'Total',
+              totalPrice: amount,
+              currencyCode: 'USD',
+              countryCode: 'US'
+            }
+          }"
+          (loadpaymentdata)="onLoadPaymentData($event)"
+          (error)="onError($event)"
+        ></google-pay-button>
+      </div>
+    </div>
+  </div>
+</div>
+
               </mat-card-content>              
             </mat-card>
+
           </div>
         </ng-template>
       </mat-tab>
@@ -133,13 +190,13 @@
     
         <span fxFlex="grow"></span>
     
-        <div>
+        <div  fxHide.lt-sm>
           Welcome User!
-          <button mat-icon-button>
-            <fa-icon (click)="tutorialService.login()" class="fas faSignInAlt fa-lg" [icon]="['fas', 'sign-in-alt']">
-            </fa-icon>
-          </button>
         </div>    
+        <button mat-icon-button [ngStyle.lt-sm]="{'margin-left': '100px'}" >
+          <fa-icon (click)="tutorialService.login()" class="fas faSignInAlt fa-lg" [icon]="['fas', 'sign-in-alt']">
+          </fa-icon>
+        </button>
       </mat-toolbar>
     </div>
     <div *ngIf="loggedin === 'true'">
@@ -154,14 +211,16 @@
         <span fxFlex="grow"></span>
     
         <div fxHide.lt-sm>
-          Welcome {{displayname}}!          
-        </div>   
-        <button mat-icon-button style="margin-right:20px;" >
+          Welcome {{displayname}}! 
+        </div>  
+          <button mat-icon-button >
     
-          <fa-icon (click)="tutorialService.logout()" class="fas faSignOutAlt fa-lg" [icon]="['fas', 'sign-out-alt']">
-          </fa-icon>
-          <!--signup-->
-        </button> 
+            <fa-icon (click)="tutorialService.logout()" class="fas faSignOutAlt fa-lg" [icon]="['fas', 'sign-out-alt']">
+            </fa-icon>
+  
+          </button>          
+         
+
       </mat-toolbar>
       <div fxLayoutAlign="center space-between" [ngStyle.lt-sm]="{'background': ' url(' + imageUrl  + ')', 'height': 'calc(100vh - 64px)'}" [ngStyle]="{'background': ' url(' + imageUrl  + ')','padding.px':'20', 'height': 'calc(100vh - 64px)'}">
         <mat-card fxLayout="column" fxFlex="25vw"  fxFlex.lt-sm="100vw">
@@ -176,7 +235,7 @@
               We are inspired by Tesla.. <br>
               According to wiki-
               "Ian Wright was Tesla's third employee, joining a few months later.[18] The three raised US$7.5 million in Series A funding in February 2004,[18] with Elon Musk contributing $6.5 million".
-              So we as a company think like Elon musk invvesting in technology of the future. <br> we take inspiration in him.
+              So we as a company think like Elon musk investing in technology of the future. <br> we take inspiration in him.
             </p>
           </mat-card-content>
           <mat-card-actions>            

@@ -9,7 +9,7 @@ import firebase from 'firebase/app';
   providedIn: 'root'
 })
 export class UserdataService {
-
+  nomorelikesflag= false;
   constructor(public auth: AngularFireAuth,private db: AngularFirestore) { }
   login() {
     return this.auth.signInWithPopup( new (firebase.auth as any).GoogleAuthProvider());
@@ -31,11 +31,17 @@ export class UserdataService {
     return doc(this.db.firestore.doc('TestCollection/TestMapArr'));
   }
   incrementby1(){
-    const increment = firebase.firestore.FieldValue.increment(1);
-    this.db.doc('mylikes/' + 'companyweb').set({ likes: increment },{merge:true});
+    if(this.nomorelikesflag === false){
+      this.nomorelikesflag = true;
+      const increment = firebase.firestore.FieldValue.increment(1);
+      this.db.doc('mylikes/' + 'companyweb').set({ likes: increment },{merge:true});
+    }else{
+      return null;
+    }
   }
   Readmylikes(){
-    return doc(this.db.firestore.doc('mylikes/companyweb'));
+
+      return doc(this.db.firestore.doc('mylikes/companyweb'));   
   }
 }
 

@@ -11,8 +11,8 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { environment } from '../environments/environment'
-import { ShareIconsModule } from 'ngx-sharebuttons/icons';
-import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
+
+import { GooglePayButtonModule} from '@google-pay/button-angular';
 
 @NgModule({
   declarations: [
@@ -24,8 +24,7 @@ import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
     AppRoutingModule,
     BrowserAnimationsModule,
     AppSharedModule,
-    ShareIconsModule,
-    ShareButtonsModule,
+    GooglePayButtonModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, // firestore
     AngularFireAuthModule, // auth
