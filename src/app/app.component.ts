@@ -46,9 +46,9 @@ export class AppComponent implements OnInit {
         filter(authCredentials => authCredentials !== null),
         map((authCredentialsObj:any)=>{
           this.myprojectVariables.initalDatafromDBSub = combineLatest([
-            doc(this.db.firestore.doc('myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
-            doc(this.db.firestore.doc('keysList/publicProjects')),
-            doc(this.db.firestore.doc('keysList/' + this.myuserProfile.UserAuthenObj.uid))
+            doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
+            doc(this.db.firestore.doc('/projectList/publicProjects')),
+            doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.UserAuthenObj.uid))
             ]).pipe(             
               map((dbresult:any)=>{
                 const [profileInfo, publicProjects, privateProjects] = dbresult;
