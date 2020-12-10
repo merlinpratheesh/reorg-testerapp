@@ -7,6 +7,7 @@ export interface userProfile {
     MembershipEnd?: string;//Demo-1 month, Member-1 year
     MembershipType?:string;//Demo/Member/Expired
     CurrentProject?:string;//Demo or User public project
+    ProjectOwner?:string;
     mainsubsectionKeys?: Observable<mainSectionGroup[]>;
     publicProjectData?: Observable<string[]>;
     ownPublicprojectData?: Observable<string[]>,
@@ -30,12 +31,9 @@ export interface mainSectionGroup {//for keys display
 }
 
 export interface projectFlags
-{
-    queryAuthenticationValue:boolean,//show different screens-based on authentication obj
+{    
     showCreateTestcase:boolean,//show add or New Testcase based on number of testcases in subsection
-    publicProjectOwner:boolean,//Show new/edit/delete testcase button
     showPaynmentpage:boolean//for expired user-remove it
-
 }
 
 export interface projectVariables

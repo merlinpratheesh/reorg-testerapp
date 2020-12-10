@@ -2,10 +2,10 @@ import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { Observable,combineLatest } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { map, withLatestFrom, switchMap,filter,tap } from 'rxjs/operators';
+import { map, withLatestFrom, switchMap,filter,tap, take } from 'rxjs/operators';
 import { UserdataService } from './service/userdata.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import {userProfile, projectVariables} from './testcaseList/single-testcase/projectTypes';
+import {userProfile, projectVariables, projectFlags} from './testcaseList/single-testcase/projectTypes';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { doc } from 'rxfire/firestore';
 
@@ -19,17 +19,17 @@ export class AppComponent implements OnInit {
     UserAuthenObj: undefined,
     MembershipEnd: undefined,
     MembershipType: undefined,
+    ProjectOwner: undefined,
     CurrentProject: undefined,
     mainsubsectionKeys: undefined,
     publicProjectData: undefined,
     ownPublicprojectData: undefined
   }
-  myprojectVariables:projectVariables={
 
-
-    authDataSub: undefined,
+  myprojectFlags: projectFlags= {    
+      showCreateTestcase:undefined,//show add or New Testcase based on number of testcases in subsection
+      showPaynmentpage:undefined//for expired user-remove it
   }
-
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
   constructor(
@@ -37,8 +37,7 @@ export class AppComponent implements OnInit {
     public afAuth: AngularFireAuth,
     public testerApiService: UserdataService,
     private db: AngularFirestore) {
-      this.myprojectVariables.authDataSub= this.afAuth.authState.pipe(map((authenticationcases: any)=>{
-        console.log('authenticationcases',authenticationcases);
+      this.afAuth.authState.pipe(map((authenticationcases: any)=>{
         if(authenticationcases){
           this.myuserProfile.UserAuthenObj=authenticationcases;           
           this.titleDialogRef.close();
@@ -52,8 +51,6 @@ export class AppComponent implements OnInit {
       }),
         filter(authCredentials => authCredentials !== null),
         map((authCredentialsObj:any)=>{
-          console.log('authCredentialsObj',authCredentialsObj);
-
           this.myuserProfile.publicProjectData= doc(this.db.firestore.doc('/projectList/publicProjects')).pipe(
             map((mypublicproject:any)=>{
               return mypublicproject.data().public;
@@ -65,17 +62,68 @@ export class AppComponent implements OnInit {
               return myprivateproject.data().projectOwner;
             })
           );
-          
-          this.myuserProfile.mainsubsectionKeys= doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
-          switchMap((dbresult:any)=>{
-                const mycurrentProject= dbresult.data();
-                return doc(this.db.firestore.doc(mycurrentProject.CurrentProject)).pipe(
-                  map((dbresultselection:any)=>{
-                    return dbresultselection.data();
-                  }))
-              }));
-        })
-        ).subscribe(afterauthdone=>{
+          this.myuserProfile.mainsubsectionKeys = doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
+            switchMap( (userprofile:any)=>{
+                if (userprofile.data() === undefined) {
+                  const nextMonth: Date = new Date();
+                  nextMonth.setMonth(nextMonth.getMonth() + 1);
+                  const newItem = {
+                    MembershipEnd: nextMonth.toDateString(),
+                    MembershipType: 'Demo',
+                    CurrentProject: '/projectList/DemoProjectKey',
+                    ProjectOwner: false
+                  };
+                  this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);       
+                  this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
+                }else{
+                  this.myuserProfile.CurrentProject= userprofile.data().CurrentProject;
+                  if (new Date(userprofile.data().MembershipEnd).valueOf() < new Date().valueOf()) {
+                    
+                    if (userprofile.data().MembershipType === 'Demo') {
+                      this.myprojectFlags.showPaynmentpage=true;
+                    }else{
+                      const nextMonth: Date = new Date();
+                      nextMonth.setMonth(nextMonth.getMonth() + 1);
+                      const newItem = {
+                        MembershipEnd: nextMonth.toDateString(),
+                        MembershipType: 'Demo',
+                        CurrentProject: '/projectList/DemoProjectKey',
+                        ProjectOwner: false
+                      };
+                      this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);
+                      this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
+                      this.myprojectFlags.showPaynmentpage=false;
+                    }
+                  
+                  }else{
+                    this.myprojectFlags.showPaynmentpage=false;
+                  }
+                }      
+              return doc(this.db.firestore.doc(this.myuserProfile.CurrentProject)).pipe(take(1),map((values: any) => {
+                const mainsubsectionKeys = [];
+                let subSectionKeys = [];
+                let savedisabledval=undefined;
+                for (const allmainlist in values.data()) {
+                  const myval = values.data();
+                  myval[allmainlist].forEach(singlesublist => {
+                    for (const mission in singlesublist) {
+                      subSectionKeys.push({ value: mission, viewValue: mission });
+                      savedisabledval = singlesublist[mission];
+                    }
+                    mainsubsectionKeys.push({
+                      name: allmainlist,
+                      disabled: savedisabledval,
+                      SubSection: subSectionKeys
+                    });
+                    subSectionKeys = [];
+                  });
+                }                
+                return mainsubsectionKeys;
+              }))
+            })
+          );          
+          return authCredentialsObj;
+          })).subscribe(afterauthdone=>{
           console.log('afterauthdone',afterauthdone);
         });
 
@@ -89,6 +137,7 @@ export class AppComponent implements OnInit {
   draweropen() {
 
   }
+
   componentLogOff(){
     this.openDialog('loggedout');
     this.myuserProfile.UserAuthenObj=undefined;
