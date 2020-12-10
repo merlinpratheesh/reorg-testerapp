@@ -13,11 +13,13 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from '../environments/environment'
 
 import { GooglePayButtonModule} from '@google-pay/button-angular';
+import { SingleTestcaseComponent } from './testcaseList/single-testcase/single-testcase.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DialogOverviewExampleDialog
+    DialogOverviewExampleDialog,
+    SingleTestcaseComponent
   ],
   imports: [
     BrowserModule,

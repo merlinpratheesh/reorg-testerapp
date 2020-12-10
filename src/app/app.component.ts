@@ -5,7 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { map } from 'rxjs/operators';
 import { UserdataService } from './service/userdata.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import { ReadyToPayChangeResponse } from '@google-pay/button-angular';
+
 
 @Component({
   selector: 'app-root',
@@ -13,15 +13,7 @@ import { ReadyToPayChangeResponse } from '@google-pay/button-angular';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'globalstart';
   loggedin:string= undefined;
-  readmylikesfromdb:Observable<number>;
-  loggedinObs:Observable<string>;
-  readstring: Observable<string>=undefined;
-  readstringArr: Observable<string[]>;
-  readmap: Observable<any>;
-  readmapArr:Observable<any[]>;
-  imageUrl="../assets/shane-rounce-1ZZ96uESRJQ-unsplash.jpg";
   displayname:string;
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
@@ -30,30 +22,10 @@ export class AppComponent implements OnInit {
     this.afAuth.authState.pipe(
       map((credential:any) => {
       if (credential !== null) {
-        console.log('credential-!null,ReachedLogin-success', credential);        
         this.loggedin='true';
-        this.readmylikesfromdb = this.tutorialService.Readmylikes().pipe(map((val:any)=>{
-          
-          return(val.data());
-        }));
-        /*
-        this.readstring= this.tutorialService.ReadTestString().pipe(map((val:any)=>{
-          return(val.data());
-        }));
-        this.readstringArr= this.tutorialService.ReadTestStringArr().pipe(map((val:any)=>{
-          return(val.data());
-        }));
-        this.readmap= this.tutorialService.ReadTestMap().pipe(map((val:any)=>{
-          return(val.data());
-        }));
-        this.readmapArr= this.tutorialService.ReadTestMapArr().pipe(map((val:any)=>{
-          return(val.data());
-        }));*/
-
         this.displayname = credential.displayName;
         return 'true';
       } else{
-        console.log('credential-null,ReachedLogout', credential,false);
         this.loggedin='false';//show skeleton & show login screen
         this.titleDialogRef.close();
         this.openDialog('loggedout');
@@ -66,55 +38,6 @@ export class AppComponent implements OnInit {
     });
 
   }
-  amount = '100.00';
-  buttonType = 'buy';
-  buttonColor = 'default';
-  existingPaymentMethodRequired = false;
-
-  paymentRequest = {
-    apiVersion: 2,
-    apiVersionMinor: 0,
-    allowedPaymentMethods: [
-      {
-        type: 'CARD',
-        parameters: {
-          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
-          allowedCardNetworks: ['MASTERCARD', 'VISA'],
-        },
-        tokenizationSpecification: {
-          type: 'PAYMENT_GATEWAY',
-          parameters: {
-            gateway: 'example',
-            gatewayMerchantId: 'exampleGatewayMerchantId',
-          },
-        },
-      },
-    ],
-    merchantInfo: {
-      merchantId: '12345678901234567890',
-      merchantName: 'Demo Merchant',
-    },
-  };
-
-  onLoadPaymentData = (event: CustomEvent<google.payments.api.PaymentData>): void => {
-    console.log('load payment data', event.detail);
-  };
-
-  onError = (event: ErrorEvent): void => {
-    console.error('error', event.error);
-  };
-
-  onPaymentDataAuthorized: google.payments.api.PaymentAuthorizedHandler = paymentData => {
-    console.log('payment authorized', paymentData);
-
-    return {
-      transactionState: 'SUCCESS',
-    };
-  };
-
-  onReadyToPayChange = (event: CustomEvent<ReadyToPayChangeResponse>): void => {
-    console.log('ready to pay change', event.detail);
-  };
   ngOnInit(){
     this.openDialog('loggingin');
   }
