@@ -36,26 +36,27 @@ export interface projectFlags
 
 export interface projectVariables
 {
-    membershipEndDate:string,
-    typeOfUser:string, 
-    activeProject:string,
-    activeProjectMainsection:string,
-    mainSectionVisiblity:string,
-    activeProjectSubsection:string,
-    activeProjectTestcase:string,
-    googleProfileName:string,
-    authenticationObjectUid:string
-    viewSelectedTestcase:TestcaseInfo,
-    mainsubsectionKeys: Observable<mainSectionGroup[]>,
-    subsectionArraydata:singleSubsection[],
-    testcaseInfodata: Observable<TestcaseInfo[]>,
-    testcaseInfoArraydata: TestcaseInfo[],
-    publicProjectData: Observable<string[]>,
-    publicProjectArrayData: string[],
-    ownPublicprojectData: string[],
-    loadkeySub:Subscription,
-    mainpagekeySub:Subscription,
-    mypubliclistSub:Subscription
+    membershipEndDate?:string,
+    typeOfUser?:string, 
+    activeProject?:string,
+    activeProjectMainsection?:string,
+    mainSectionVisiblity?:string,
+    activeProjectSubsection?:string,
+    activeProjectTestcase?:string,
+    googleProfileName?:string,
+    authenticationObjectUid?:string
+    viewSelectedTestcase?:TestcaseInfo,
+    mainsubsectionKeys?: Observable<mainSectionGroup[]>,
+    subsectionArraydata?:singleSubsection[],
+    testcaseInfodata?: Observable<TestcaseInfo[]>,
+    testcaseInfoArraydata?: TestcaseInfo[],
+    publicProjectData?: Observable<string[]>,
+    publicProjectArrayData?: string[],
+    ownPublicprojectData?: string[],
+    initalDatafromDB?:Subscription,
+    loadkeySub?:Subscription,
+    mainpagekeySub?:Subscription,
+    mypubliclistSub?:Subscription
 }
 
 export interface projectControls{

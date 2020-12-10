@@ -5,7 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { map, withLatestFrom, switchMap,filter,tap } from 'rxjs/operators';
 import { UserdataService } from './service/userdata.service';
 import { MatSidenav } from '@angular/material/sidenav';
-import {userProfile, projectFlags} from './testcaseList/single-testcase/projectTypes';
+import {userProfile, projectVariables} from './testcaseList/single-testcase/projectTypes';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { doc } from 'rxfire/firestore';
 
@@ -18,13 +18,16 @@ export class AppComponent implements OnInit {
   myuserProfile:userProfile={
     UserAuthenObj: undefined
   }
-
+  myprojectVariables:projectVariables={
+    initalDatafromDB: undefined
+  }
+  
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
   constructor(
     public dialog: MatDialog, 
     public afAuth: AngularFireAuth,
-    public tutorialService: UserdataService,
+    public testerApiService: UserdataService,
     private db: AngularFirestore) {
       this.afAuth.authState.pipe(tap((authenticationcases: any)=>{
         console.log('authenticationcases',authenticationcases);
@@ -42,7 +45,7 @@ export class AppComponent implements OnInit {
         filter(u => u !== null),
         map((authCredentialsObj:any)=>{
 
-          const mysubscription = combineLatest([
+          this.myprojectVariables.initalDatafromDB = combineLatest([
             doc(this.db.firestore.doc('myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
             doc(this.db.firestore.doc('keysList/publicProjects')),
             doc(this.db.firestore.doc('keysList/' + this.myuserProfile.UserAuthenObj.uid))
@@ -60,7 +63,7 @@ export class AppComponent implements OnInit {
         ).subscribe(authCredentialsObjdata=>{
 
           if(authCredentialsObjdata === null){
-            this.titleDialogRef.close();
+            //this.titleDialogRef.close();
           }
         });
 
@@ -73,6 +76,10 @@ export class AppComponent implements OnInit {
   }
   draweropen() {
 
+  }
+  componentLogOff(){
+    this.myprojectVariables.initalDatafromDB.unsubscribe();
+    this.testerApiService.logout();
   }
   openDialog(status: string): void {
     this.titleDialogRef = this.dialog.open(DialogOverviewExampleDialog, {
@@ -100,7 +107,7 @@ export class AppComponent implements OnInit {
     <mat-chip  style="font-size:2em; padding:10px;height: 60px !important;
     " >Login now:</mat-chip>
     </mat-chip-list>
-    <button mat-raised-button color="primary" (click)="tutorialService.login()"> Google login</button>
+    <button mat-raised-button color="primary" (click)="testerApiService.login()"> Google login</button>
   </div>
   </div>
   <mat-spinner  *ngIf="data !== 'loggedout'"></mat-spinner>
@@ -110,7 +117,7 @@ export class DialogOverviewExampleDialog {
   mydata='showspinner';
   constructor(
     public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data:string, public tutorialService: UserdataService) {
+    @Inject(MAT_DIALOG_DATA) public data:string, public testerApiService: UserdataService) {
       
     }
 

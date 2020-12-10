@@ -24,6 +24,7 @@
         </span>
 
       </mat-toolbar>
+      Spinner
     </div>
     <div *ngIf="myuserProfile.UserAuthenObj === null">
       <mat-toolbar color="primary">
@@ -37,10 +38,11 @@
           Welcome User!
         </div>    
         <button mat-icon-button [ngStyle.lt-sm]="{'margin-left': '100px'}" >
-          <fa-icon (click)="tutorialService.login()" class="fas faSignInAlt fa-lg" [icon]="['fas', 'sign-in-alt']">
+          <fa-icon (click)="testerApiService.login()" class="fas faSignInAlt fa-lg" [icon]="['fas', 'sign-in-alt']">
           </fa-icon>
         </button>
       </mat-toolbar>
+      logged out
     </div>
     <div *ngIf="myuserProfile.UserAuthenObj">
       <mat-toolbar color="primary">
@@ -58,14 +60,14 @@
         </div>  
           <button mat-icon-button >
     
-            <fa-icon (click)="tutorialService.logout()" class="fas faSignOutAlt fa-lg" [icon]="['fas', 'sign-out-alt']">
+            <fa-icon (click)="componentLogOff()" class="fas faSignOutAlt fa-lg" [icon]="['fas', 'sign-out-alt']">
             </fa-icon>
   
           </button>          
          
 
       </mat-toolbar>
-
+Loggedin
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
