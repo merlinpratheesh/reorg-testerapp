@@ -50,7 +50,7 @@ export interface projectVariables
     subsectionArraydata?:singleSubsection[],
     testcaseInfodata?: Observable<TestcaseInfo[]>,
     testcaseInfoArraydata?: TestcaseInfo[],
-    publicProjectData?: Observable<string[]>,
+
     publicProjectArrayData?: string[],
     ownPublicprojectData?: string[],
     initalDatafromDBSub?:Subscription,

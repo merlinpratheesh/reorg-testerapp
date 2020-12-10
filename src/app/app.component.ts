@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
     initalDatafromDBSub: undefined,
     authDataSub: undefined,
   }
-  
+
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
   constructor(
@@ -43,20 +43,25 @@ export class AppComponent implements OnInit {
           return null;
         }
       }),
-        filter(u => u !== null),
+        filter(authCredentials => authCredentials !== null),
         map((authCredentialsObj:any)=>{
-
           this.myprojectVariables.initalDatafromDBSub = combineLatest([
             doc(this.db.firestore.doc('myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
             doc(this.db.firestore.doc('keysList/publicProjects')),
             doc(this.db.firestore.doc('keysList/' + this.myuserProfile.UserAuthenObj.uid))
-            ]).pipe( 
+            ]).pipe(             
               map((dbresult:any)=>{
                 const [profileInfo, publicProjects, privateProjects] = dbresult;
                 return {...profileInfo.data(),...publicProjects.data(), ...privateProjects.data() }
               })
-              ).subscribe(something=>{
-                console.log(something);
+              ).subscribe(dbresult=>{
+                doc(this.db.firestore.doc(dbresult.CurrentProject)).pipe(
+                  map((dbresultselection:any)=>{
+
+                    return {...dbresult,...dbresultselection.data()}
+                  })).subscribe(dbresultAfterSelection=>{
+                    console.log('dbresultAfterSelection',dbresultAfterSelection);
+                  });
               });
         })
         ).subscribe();
