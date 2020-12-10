@@ -1,12 +1,13 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable,combineLatest } from 'rxjs';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { map } from 'rxjs/operators';
+import { map, withLatestFrom, switchMap,filter,tap } from 'rxjs/operators';
 import { UserdataService } from './service/userdata.service';
 import { MatSidenav } from '@angular/material/sidenav';
 import {userProfile, projectFlags} from './testcaseList/single-testcase/projectTypes';
-
+import { AngularFirestore } from '@angular/fire/firestore';
+import { doc } from 'rxfire/firestore';
 
 @Component({
   selector: 'app-root',
@@ -20,24 +21,48 @@ export class AppComponent implements OnInit {
 
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
-  constructor(public dialog: MatDialog, public afAuth: AngularFireAuth,
-    public tutorialService: UserdataService) {
-    this.afAuth.authState.pipe(
-      map((credential:any) => {
-      if (credential !== null) {
-        this.myuserProfile.UserAuthenObj=credential;
-        return 'true';
-      } else{
-        this.myuserProfile.UserAuthenObj=null;//show skeleton & show login screen
-        this.titleDialogRef.close();
-        this.openDialog('loggedout');
-        return 'false';
-      }
-    })).subscribe(mydata=>{
-      if(mydata === 'true'){
-        this.titleDialogRef.close();
-      }
-    });
+  constructor(
+    public dialog: MatDialog, 
+    public afAuth: AngularFireAuth,
+    public tutorialService: UserdataService,
+    private db: AngularFirestore) {
+      this.afAuth.authState.pipe(tap((authenticationcases: any)=>{
+        console.log('authenticationcases',authenticationcases);
+        if(authenticationcases !== null){
+          this.myuserProfile.UserAuthenObj=authenticationcases; 
+          this.titleDialogRef.close();
+          return authenticationcases;
+        }else{
+          this.titleDialogRef.close();
+          this.openDialog('loggedout');
+          this.myuserProfile.UserAuthenObj = null;
+          return null;
+        }
+      }),
+        filter(u => u !== null),
+        map((authCredentialsObj:any)=>{
+
+          const mysubscription = combineLatest([
+            doc(this.db.firestore.doc('myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
+            doc(this.db.firestore.doc('keysList/publicProjects')),
+            doc(this.db.firestore.doc('keysList/' + this.myuserProfile.UserAuthenObj.uid))
+            ]).pipe( 
+              map((dbresult:any)=>{
+                const [profileInfo, publicProjects, privateProjects] = dbresult;
+                return {...profileInfo.data(),...publicProjects.data(), ...privateProjects.data() }
+              })
+              ).subscribe(something=>{
+                console.log(something);
+              });
+    
+          return authCredentialsObj;
+        })
+        ).subscribe(authCredentialsObjdata=>{
+
+          if(authCredentialsObjdata === null){
+            this.titleDialogRef.close();
+          }
+        });
 
   }
   ngOnInit(){
