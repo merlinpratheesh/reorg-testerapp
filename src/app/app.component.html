@@ -8,7 +8,7 @@
 
   </mat-sidenav>
   <mat-sidenav-content>
-    <div *ngIf="loggedin === undefined">
+    <div *ngIf="myuserProfile.UserAuthenObj === undefined">
       <mat-toolbar color="primary" fxFlex="100vw">
         <mat-icon style="margin-right:20px;" *ngIf="!drawer.opened" (click)="drawer.toggle()">
           menu
@@ -25,7 +25,7 @@
 
       </mat-toolbar>
     </div>
-    <div *ngIf="loggedin === 'false'">
+    <div *ngIf="myuserProfile.UserAuthenObj === null">
       <mat-toolbar color="primary">
         <h1>
           Candiser Software pvt Ltd.
@@ -42,7 +42,7 @@
         </button>
       </mat-toolbar>
     </div>
-    <div *ngIf="loggedin === 'true'">
+    <div *ngIf="myuserProfile.UserAuthenObj">
       <mat-toolbar color="primary">
         <mat-icon style="margin-right:20px;" *ngIf="!drawer.opened" (click)="drawer.toggle()">
           menu
@@ -54,7 +54,7 @@
         <span fxFlex="grow"></span>
     
         <div fxHide.lt-sm>
-          Welcome {{displayname}}! 
+          Welcome {{myuserProfile.UserAuthenObj.displayName}}! 
         </div>  
           <button mat-icon-button >
     

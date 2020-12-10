@@ -5,6 +5,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { map } from 'rxjs/operators';
 import { UserdataService } from './service/userdata.service';
 import { MatSidenav } from '@angular/material/sidenav';
+import {userProfile, projectFlags} from './testcaseList/single-testcase/projectTypes';
 
 
 @Component({
@@ -13,8 +14,10 @@ import { MatSidenav } from '@angular/material/sidenav';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  loggedin:string= undefined;
-  displayname:string;
+  myuserProfile:userProfile={
+    UserAuthenObj: undefined
+  }
+
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
   @ViewChild('drawer') public sidenav: MatSidenav;
   constructor(public dialog: MatDialog, public afAuth: AngularFireAuth,
@@ -22,11 +25,10 @@ export class AppComponent implements OnInit {
     this.afAuth.authState.pipe(
       map((credential:any) => {
       if (credential !== null) {
-        this.loggedin='true';
-        this.displayname = credential.displayName;
+        this.myuserProfile.UserAuthenObj=credential;
         return 'true';
       } else{
-        this.loggedin='false';//show skeleton & show login screen
+        this.myuserProfile.UserAuthenObj=null;//show skeleton & show login screen
         this.titleDialogRef.close();
         this.openDialog('loggedout');
         return 'false';

@@ -6,7 +6,7 @@ export interface userProfile {
     UserAuthenObj: firebase.User,//Receive User obj after login success
     MembershipEnd?: string;//Demo-1 month, Member-1 year
     MembershipType?:string;//Demo/Member/Expired
-    CurrentProject:string;//Demo or User public project
+    CurrentProject?:string;//Demo or User public project
    }
 
 export interface TestcaseInfo{
