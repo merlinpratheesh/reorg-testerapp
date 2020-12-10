@@ -67,7 +67,9 @@
          
 
       </mat-toolbar>
-Loggedin
+{{myuserProfile.publicProjectData | async | json}}
+{{myuserProfile.ownPublicprojectData | async | json}}
+{{myuserProfile.mainsubsectionKeys | async | json}}
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

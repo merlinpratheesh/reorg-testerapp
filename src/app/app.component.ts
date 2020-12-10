@@ -16,10 +16,17 @@ import { doc } from 'rxfire/firestore';
 })
 export class AppComponent implements OnInit {
   myuserProfile:userProfile={
-    UserAuthenObj: undefined
+    UserAuthenObj: undefined,
+    MembershipEnd: undefined,
+    MembershipType: undefined,
+    CurrentProject: undefined,
+    mainsubsectionKeys: undefined,
+    publicProjectData: undefined,
+    ownPublicprojectData: undefined
   }
   myprojectVariables:projectVariables={
-    initalDatafromDBSub: undefined,
+
+
     authDataSub: undefined,
   }
 
@@ -30,10 +37,10 @@ export class AppComponent implements OnInit {
     public afAuth: AngularFireAuth,
     public testerApiService: UserdataService,
     private db: AngularFirestore) {
-      this.myprojectVariables.authDataSub= this.afAuth.authState.pipe(tap((authenticationcases: any)=>{
+      this.myprojectVariables.authDataSub= this.afAuth.authState.pipe(map((authenticationcases: any)=>{
         console.log('authenticationcases',authenticationcases);
-        if(authenticationcases !== null){
-          this.myuserProfile.UserAuthenObj=authenticationcases; 
+        if(authenticationcases){
+          this.myuserProfile.UserAuthenObj=authenticationcases;           
           this.titleDialogRef.close();
           return authenticationcases;
         }else{
@@ -45,26 +52,32 @@ export class AppComponent implements OnInit {
       }),
         filter(authCredentials => authCredentials !== null),
         map((authCredentialsObj:any)=>{
-          this.myprojectVariables.initalDatafromDBSub = combineLatest([
-            doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
-            doc(this.db.firestore.doc('/projectList/publicProjects')),
-            doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.UserAuthenObj.uid))
-            ]).pipe(             
-              map((dbresult:any)=>{
-                const [profileInfo, publicProjects, privateProjects] = dbresult;
-                return {...profileInfo.data(),...publicProjects.data(), ...privateProjects.data() }
-              })
-              ).subscribe(dbresult=>{
-                doc(this.db.firestore.doc(dbresult.CurrentProject)).pipe(
-                  map((dbresultselection:any)=>{
+          console.log('authCredentialsObj',authCredentialsObj);
 
-                    return {...dbresult,...dbresultselection.data()}
-                  })).subscribe(dbresultAfterSelection=>{
-                    console.log('dbresultAfterSelection',dbresultAfterSelection);
-                  });
-              });
+          this.myuserProfile.publicProjectData= doc(this.db.firestore.doc('/projectList/publicProjects')).pipe(
+            map((mypublicproject:any)=>{
+              return mypublicproject.data().public;
+            })
+          );
+
+          this.myuserProfile.ownPublicprojectData= doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
+            map((myprivateproject:any)=>{
+              return myprivateproject.data().projectOwner;
+            })
+          );
+          
+          this.myuserProfile.mainsubsectionKeys= doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
+          switchMap((dbresult:any)=>{
+                const mycurrentProject= dbresult.data();
+                return doc(this.db.firestore.doc(mycurrentProject.CurrentProject)).pipe(
+                  map((dbresultselection:any)=>{
+                    return dbresultselection.data();
+                  }))
+              }));
         })
-        ).subscribe();
+        ).subscribe(afterauthdone=>{
+          console.log('afterauthdone',afterauthdone);
+        });
 
   }
   ngOnInit(){
@@ -78,8 +91,7 @@ export class AppComponent implements OnInit {
   }
   componentLogOff(){
     this.openDialog('loggedout');
-    this.myprojectVariables.authDataSub.unsubscribe();
-    this.myprojectVariables.initalDatafromDBSub.unsubscribe();
+    this.myuserProfile.UserAuthenObj=undefined;
     this.testerApiService.logout();
   }
   openDialog(status: string): void {
@@ -99,9 +111,9 @@ export class AppComponent implements OnInit {
   template:`
   <div *ngIf="data === 'loggedout'"  style="color:blue; padding:0px;" >
   <div fxLayout="column" fxLayoutAlign="space-around center" style="letter-spacing: 20px;">
-  <h1> <strong style="font-size:30px">Company Information</strong> </h1>
-  <h1>  Checkout various Projects in pipeline </h1>
-  <h1>  Also Browse rolledout Public projects </h1>
+  <h1> <strong style="font-size:30px">Testing tool</strong> </h1>
+  <h1>  Checkout various Public projects TestCases </h1>
+  <h1>  Also Edit/Create/Delete Testcases in Demo Mode </h1>
   </div>
   <div fxLayout="row " fxLayoutAlign="space-around center">
     <mat-chip-list>

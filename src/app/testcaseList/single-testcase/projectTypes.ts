@@ -7,6 +7,9 @@ export interface userProfile {
     MembershipEnd?: string;//Demo-1 month, Member-1 year
     MembershipType?:string;//Demo/Member/Expired
     CurrentProject?:string;//Demo or User public project
+    mainsubsectionKeys?: Observable<mainSectionGroup[]>;
+    publicProjectData?: Observable<string[]>;
+    ownPublicprojectData?: Observable<string[]>,
    }
 
 export interface TestcaseInfo{
@@ -14,6 +17,7 @@ export interface TestcaseInfo{
     subHeading:string;//Sub-Heading in testcase list
     description: string;//Description in testcase view
     stackblitzLink: string;//stackblitzLink in testcase edit/doubleclick
+    
 }
 
 export interface singleSubsection {//for keys display
@@ -46,18 +50,18 @@ export interface projectVariables
     googleProfileName?:string,
     authenticationObjectUid?:string
     viewSelectedTestcase?:TestcaseInfo,
-    mainsubsectionKeys?: Observable<mainSectionGroup[]>,
+
     subsectionArraydata?:singleSubsection[],
     testcaseInfodata?: Observable<TestcaseInfo[]>,
     testcaseInfoArraydata?: TestcaseInfo[],
 
     publicProjectArrayData?: string[],
-    ownPublicprojectData?: string[],
-    initalDatafromDBSub?:Subscription,
+
     authDataSub?:Subscription,
     loadkeySub?:Subscription,
     mainpagekeySub?:Subscription,
-    mypubliclistSub?:Subscription
+    mypubliclistSub?:Subscription,
+
 }
 
 export interface projectControls{
