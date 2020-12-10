@@ -53,7 +53,8 @@ export interface projectVariables
     publicProjectData?: Observable<string[]>,
     publicProjectArrayData?: string[],
     ownPublicprojectData?: string[],
-    initalDatafromDB?:Subscription,
+    initalDatafromDBSub?:Subscription,
+    authDataSub?:Subscription,
     loadkeySub?:Subscription,
     mainpagekeySub?:Subscription,
     mypubliclistSub?:Subscription
@@ -69,4 +70,3 @@ export interface projectControls{
     visibilityMainsectionControl: FormControl,// user selects a Main section visibility key
     editSubsectionControl: FormControl  // user selects a Sub section key
 }
-

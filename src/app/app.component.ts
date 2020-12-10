@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
     UserAuthenObj: undefined
   }
   myprojectVariables:projectVariables={
-    initalDatafromDB: undefined
+    initalDatafromDBSub: undefined,
+    authDataSub: undefined,
   }
   
   titleDialogRef: MatDialogRef<DialogOverviewExampleDialog>
@@ -29,7 +30,7 @@ export class AppComponent implements OnInit {
     public afAuth: AngularFireAuth,
     public testerApiService: UserdataService,
     private db: AngularFirestore) {
-      this.afAuth.authState.pipe(tap((authenticationcases: any)=>{
+      this.myprojectVariables.authDataSub= this.afAuth.authState.pipe(tap((authenticationcases: any)=>{
         console.log('authenticationcases',authenticationcases);
         if(authenticationcases !== null){
           this.myuserProfile.UserAuthenObj=authenticationcases; 
@@ -45,7 +46,7 @@ export class AppComponent implements OnInit {
         filter(u => u !== null),
         map((authCredentialsObj:any)=>{
 
-          this.myprojectVariables.initalDatafromDB = combineLatest([
+          this.myprojectVariables.initalDatafromDBSub = combineLatest([
             doc(this.db.firestore.doc('myProfile/' + this.myuserProfile.UserAuthenObj.uid)), 
             doc(this.db.firestore.doc('keysList/publicProjects')),
             doc(this.db.firestore.doc('keysList/' + this.myuserProfile.UserAuthenObj.uid))
@@ -57,15 +58,8 @@ export class AppComponent implements OnInit {
               ).subscribe(something=>{
                 console.log(something);
               });
-    
-          return authCredentialsObj;
         })
-        ).subscribe(authCredentialsObjdata=>{
-
-          if(authCredentialsObjdata === null){
-            //this.titleDialogRef.close();
-          }
-        });
+        ).subscribe();
 
   }
   ngOnInit(){
@@ -78,7 +72,9 @@ export class AppComponent implements OnInit {
 
   }
   componentLogOff(){
-    this.myprojectVariables.initalDatafromDB.unsubscribe();
+    this.openDialog('loggedout');
+    this.myprojectVariables.authDataSub.unsubscribe();
+    this.myprojectVariables.initalDatafromDBSub.unsubscribe();
     this.testerApiService.logout();
   }
   openDialog(status: string): void {
