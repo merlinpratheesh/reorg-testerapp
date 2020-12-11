@@ -17,8 +17,6 @@ import { doc } from 'rxfire/firestore';
 export class AppComponent implements OnInit {
   myuserProfile:userProfile={
     UserAuthenObj: undefined,
-    MembershipEnd: undefined,
-    MembershipType: undefined,
     ProjectOwner: undefined,
     CurrentProject: undefined,
     mainsubsectionKeys: undefined,
@@ -59,7 +57,10 @@ export class AppComponent implements OnInit {
 
           this.myuserProfile.ownPublicprojectData= doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
             map((myprivateproject:any)=>{
-              return myprivateproject.data().projectOwner;
+              if(myprivateproject.data() === undefined){
+                return null;
+              }
+              return myprivateproject.data().privateProject;
             })
           );
           this.myuserProfile.mainsubsectionKeys = doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
@@ -70,16 +71,18 @@ export class AppComponent implements OnInit {
                   const newItem = {
                     MembershipEnd: nextMonth.toDateString(),
                     MembershipType: 'Demo',
-                    CurrentProject: '/projectList/DemoProjectKey',
-                    ProjectOwner: false
+                    CurrentProject: '/projectList/DemoProjectKey'
                   };
                   this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);       
                   this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
+                  this.myprojectFlags.showPaynmentpage=false;
+                  this.myuserProfile.ProjectOwner=true;
                 }else{
                   this.myuserProfile.CurrentProject= userprofile.data().CurrentProject;
                   if (new Date(userprofile.data().MembershipEnd).valueOf() < new Date().valueOf()) {
                     
                     if (userprofile.data().MembershipType === 'Demo') {
+                      this.myuserProfile.ProjectOwner=false;
                       this.myprojectFlags.showPaynmentpage=true;
                     }else{
                       const nextMonth: Date = new Date();
@@ -87,16 +90,17 @@ export class AppComponent implements OnInit {
                       const newItem = {
                         MembershipEnd: nextMonth.toDateString(),
                         MembershipType: 'Demo',
-                        CurrentProject: '/projectList/DemoProjectKey',
-                        ProjectOwner: false
+                        CurrentProject: '/projectList/DemoProjectKey'
                       };
                       this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);
                       this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
                       this.myprojectFlags.showPaynmentpage=false;
+                      this.myuserProfile.ProjectOwner=true;
                     }
                   
                   }else{
                     this.myprojectFlags.showPaynmentpage=false;
+                    this.myuserProfile.ProjectOwner=true;
                   }
                 }      
               return doc(this.db.firestore.doc(this.myuserProfile.CurrentProject)).pipe(take(1),map((values: any) => {

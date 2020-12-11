@@ -9,7 +9,7 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <div *ngIf="myuserProfile.UserAuthenObj === undefined">
-      <mat-toolbar color="primary" fxFlex="100vw">
+      <mat-toolbar color="primary" >
         <mat-icon style="margin-right:20px;" *ngIf="!drawer.opened" (click)="drawer.toggle()">
           menu
         </mat-icon>
@@ -24,7 +24,9 @@
         </span>
 
       </mat-toolbar>
-      Spinner
+      <h1 style="font-size: 20px;">
+        Spinner
+      </h1>
     </div>
     <div *ngIf="myuserProfile.UserAuthenObj === null">
       <mat-toolbar color="primary">
@@ -67,9 +69,17 @@
          
 
       </mat-toolbar>
-{{myuserProfile.publicProjectData | async | json}}
-{{myuserProfile.ownPublicprojectData | async | json}}
-{{myuserProfile.mainsubsectionKeys | async | json}}
+      <pre>
+        <!--User profile: {{myuserProfile | json}}-->
+        <div *ngIf=" myuserProfile as userinfo">
+          ProjectOwner: {{userinfo.ProjectOwner}}
+          CurrentProject: {{userinfo.CurrentProject}}
+          Public projects:{{userinfo.publicProjectData | async | json}}
+          Private Projects: {{userinfo.ownPublicprojectData | async | json}}
+          Initial Keys: {{userinfo.mainsubsectionKeys | async | json}}
+        </div>
+        Project var:{{myprojectFlags | json}}
+      </pre>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
