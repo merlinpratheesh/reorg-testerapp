@@ -3,9 +3,10 @@ import { FormControl} from '@angular/forms'
 import firebase from 'firebase/app';
 
 export interface userProfile { 
-    UserAuthenObj: firebase.User,//Receive User obj after login success
-    CurrentProject?:string;//Demo or User public project
-    ProjectOwner?:boolean;
+    userAuthenObj: firebase.User,//Receive User obj after login success
+    projectLocation?:string;//Demo or User public project ref
+    projectOwner?:boolean;
+    projectName?:string
     mainsubsectionKeys?: Observable<mainSectionGroup[]>;
     publicProjectData?: Observable<string[]>;
     ownPublicprojectData?: Observable<string[]>,

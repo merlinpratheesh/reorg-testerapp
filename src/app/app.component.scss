@@ -1,7 +1,115 @@
-.drawer {
-    position: fixed;
-    height: 100vh;
-    border-right: 1px solid #ccc;
+.params {
+  padding: 5px;
+  background-color: #fff;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+
+  & > label {
+    margin: 5px 10px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+
+    & > * {
+      display: block;
+    }
+
+    & > span {
+      margin-bottom: 2px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    & > input,
+    & > select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding: 4px;
+      border: 1px solid #999;
+      background-color: #fff;
+      border-radius: 0;
+      color: #000;
+    }
+  }
+}
+
+.example {
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
+
+  & > .title {
+    width: 250px;
+    align-items: center;
+    display: inherit;
   }
 
+  & > .demo {
+    flex: 1 0 0;
+
+    & > * {
+      margin: 1px;
+    }
+  }
+}
+
+.container-wrapper {
+  max-width: auto;
+  margin: 10px;
+  padding: 10px;
+}
+
+
+.list {
+  border: solid 1px #ccc;
+  min-height: 60px;
+  border-radius: 4px;
+}
+
+.empty-label {
+  font-size: 2em;
+  padding-top: 10px;
+  text-align: center;
+  opacity: 0.2;
+}
+
+.drawer {
+  position: fixed;
+  height: 100vh;
+  min-width: 25%;
+  border-right: 1px solid #ccc;
+}
+.drawer.header {
+  position: absolute;
+  right: 0;
+  justify-content: space-between;
+}
+.drawer.contents {
+  padding: 16px;
   
+}
+.custom-icon {
+  cursor: pointer;
+}
+
+
+
+.custom-form-field-icon {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.example-margin {
+  margin: 0 10px;
+}
+
+

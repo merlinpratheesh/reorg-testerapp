@@ -14,11 +14,13 @@ import { doc } from 'rxfire/firestore';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnInit {
   myuserProfile:userProfile={
-    UserAuthenObj: undefined,
-    ProjectOwner: undefined,
-    CurrentProject: undefined,
+    userAuthenObj: undefined,
+    projectOwner: undefined,
+    projectLocation: undefined,
+    projectName: undefined,
     mainsubsectionKeys: undefined,
     publicProjectData: undefined,
     ownPublicprojectData: undefined
@@ -37,13 +39,13 @@ export class AppComponent implements OnInit {
     private db: AngularFirestore) {
       this.afAuth.authState.pipe(map((authenticationcases: any)=>{
         if(authenticationcases){
-          this.myuserProfile.UserAuthenObj=authenticationcases;           
+          this.myuserProfile.userAuthenObj=authenticationcases;           
           this.titleDialogRef.close();
           return authenticationcases;
         }else{
           this.titleDialogRef.close();
           this.openDialog('loggedout');
-          this.myuserProfile.UserAuthenObj = null;
+          this.myuserProfile.userAuthenObj = null;
           return null;
         }
       }),
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit {
             })
           );
 
-          this.myuserProfile.ownPublicprojectData= doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
+          this.myuserProfile.ownPublicprojectData= doc(this.db.firestore.doc('/projectList/' + this.myuserProfile.userAuthenObj.uid)).pipe(
             map((myprivateproject:any)=>{
               if(myprivateproject.data() === undefined){
                 return null;
@@ -63,47 +65,58 @@ export class AppComponent implements OnInit {
               return myprivateproject.data().privateProject;
             })
           );
-          this.myuserProfile.mainsubsectionKeys = doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.UserAuthenObj.uid)).pipe(
+          this.myuserProfile.mainsubsectionKeys = doc(this.db.firestore.doc('/myProfile/' + this.myuserProfile.userAuthenObj.uid)).pipe(
             switchMap( (userprofile:any)=>{
-                if (userprofile.data() === undefined) {
+                if (userprofile.data() === undefined) {//norecords
                   const nextMonth: Date = new Date();
                   nextMonth.setMonth(nextMonth.getMonth() + 1);
                   const newItem = {
                     MembershipEnd: nextMonth.toDateString(),
                     MembershipType: 'Demo',
-                    CurrentProject: '/projectList/DemoProjectKey'
+                    projectLocation: '/projectList/DemoProjectKey',
+                    projectOwner:true,
+                    projectName:'Demo'
                   };
-                  this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);       
-                  this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
+                  this.db.doc<any>('myProfile/' + this.myuserProfile.userAuthenObj.uid).set(newItem);       
+                  this.myuserProfile.projectLocation= '/projectList/DemoProjectKey';
                   this.myprojectFlags.showPaynmentpage=false;
-                  this.myuserProfile.ProjectOwner=true;
-                }else{
-                  this.myuserProfile.CurrentProject= userprofile.data().CurrentProject;
+                  this.myuserProfile.projectName='Demo';
+                  this.myuserProfile.projectOwner=true;
+                }else{//demo/member
+                  this.myuserProfile.projectLocation= userprofile.data().CurrentProject;
                   if (new Date(userprofile.data().MembershipEnd).valueOf() < new Date().valueOf()) {
                     
-                    if (userprofile.data().MembershipType === 'Demo') {
-                      this.myuserProfile.ProjectOwner=false;
+                    if (userprofile.data().MembershipType === 'Demo') {//expired
+                      this.myuserProfile.projectOwner=false;
+                      this.myuserProfile.projectName='Demo';
                       this.myprojectFlags.showPaynmentpage=true;
-                    }else{
+                      this.myuserProfile.projectLocation= '/projectList/DemoProjectKey';
+                    }else{//expired member
                       const nextMonth: Date = new Date();
                       nextMonth.setMonth(nextMonth.getMonth() + 1);
                       const newItem = {
                         MembershipEnd: nextMonth.toDateString(),
                         MembershipType: 'Demo',
-                        CurrentProject: '/projectList/DemoProjectKey'
+                        projectLocation: '/projectList/DemoProjectKey',
+                        projectOwner:true,
+                        projectName:'Demo'
                       };
-                      this.db.doc<any>('myProfile/' + this.myuserProfile.UserAuthenObj.uid).set(newItem);
-                      this.myuserProfile.CurrentProject= '/projectList/DemoProjectKey';
+                      this.db.doc<any>('myProfile/' + this.myuserProfile.userAuthenObj.uid).set(newItem);
+                      this.myuserProfile.projectLocation= '/projectList/DemoProjectKey';
                       this.myprojectFlags.showPaynmentpage=false;
-                      this.myuserProfile.ProjectOwner=true;
+                      this.myuserProfile.projectOwner=true;
+                      this.myuserProfile.projectName='Demo';
                     }
                   
                   }else{
+                    
+                    this.myuserProfile.projectLocation= userprofile.data().projectLocation;
+                    this.myuserProfile.projectName=userprofile.data().projectName;
+                    this.myuserProfile.projectOwner=userprofile.data().projectOwner;
                     this.myprojectFlags.showPaynmentpage=false;
-                    this.myuserProfile.ProjectOwner=true;
                   }
                 }      
-              return doc(this.db.firestore.doc(this.myuserProfile.CurrentProject)).pipe(take(1),map((values: any) => {
+              return doc(this.db.firestore.doc(this.myuserProfile.projectLocation)).pipe(take(1),map((values: any) => {
                 const mainsubsectionKeys = [];
                 let subSectionKeys = [];
                 let savedisabledval=undefined;
@@ -128,7 +141,7 @@ export class AppComponent implements OnInit {
           );          
           return authCredentialsObj;
           })).subscribe(afterauthdone=>{
-          console.log('afterauthdone',afterauthdone);
+          
         });
 
   }
@@ -144,7 +157,7 @@ export class AppComponent implements OnInit {
 
   componentLogOff(){
     this.openDialog('loggedout');
-    this.myuserProfile.UserAuthenObj=undefined;
+    this.myuserProfile.userAuthenObj=undefined;
     this.testerApiService.logout();
   }
   openDialog(status: string): void {

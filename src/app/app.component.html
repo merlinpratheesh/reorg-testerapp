@@ -8,7 +8,7 @@
 
   </mat-sidenav>
   <mat-sidenav-content>
-    <div *ngIf="myuserProfile.UserAuthenObj === undefined">
+    <div *ngIf="myuserProfile.userAuthenObj === undefined">
       <mat-toolbar color="primary" >
         <mat-icon style="margin-right:20px;" *ngIf="!drawer.opened" (click)="drawer.toggle()">
           menu
@@ -28,7 +28,7 @@
         Spinner
       </h1>
     </div>
-    <div *ngIf="myuserProfile.UserAuthenObj === null">
+    <div *ngIf="myuserProfile.userAuthenObj === null">
       <mat-toolbar color="primary">
         <h1>
           Candiser Software pvt Ltd.
@@ -46,7 +46,7 @@
       </mat-toolbar>
       logged out
     </div>
-    <div *ngIf="myuserProfile.UserAuthenObj">
+    <div *ngIf="myuserProfile.userAuthenObj">
       <mat-toolbar color="primary">
         <mat-icon style="margin-right:20px;" *ngIf="!drawer.opened" (click)="drawer.toggle()">
           menu
@@ -58,7 +58,7 @@
         <span fxFlex="grow"></span>
     
         <div fxHide.lt-sm>
-          Welcome {{myuserProfile.UserAuthenObj.displayName}}! 
+          Welcome {{myuserProfile.userAuthenObj.displayName}}! 
         </div>  
           <button mat-icon-button >
     
@@ -69,11 +69,13 @@
          
 
       </mat-toolbar>
+      
       <pre>
         <!--User profile: {{myuserProfile | json}}-->
         <div *ngIf=" myuserProfile as userinfo">
-          ProjectOwner: {{userinfo.ProjectOwner}}
-          CurrentProject: {{userinfo.CurrentProject}}
+          ProjectOwner: {{userinfo.projectOwner}}
+          projectName: {{userinfo.projectName}}
+          projectLocation: {{userinfo.projectLocation}}
           Public projects:{{userinfo.publicProjectData | async | json}}
           Private Projects: {{userinfo.ownPublicprojectData | async | json}}
           Initial Keys: {{userinfo.mainsubsectionKeys | async | json}}
